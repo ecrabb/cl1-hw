@@ -20,8 +20,8 @@ def iterateRules():
     #
     # if you need help with python regular expressions, see:
     #   http://docs.python.org/library/re.html
-    ### TODO: YOUR CODE HERE
-    util.raiseNotDefined()
+    yield ("(.+[aeiou])c\+([ei].*)", "\\1ck\\2")
+    #util.raiseNotDefined()
 
     
 def generate(analysis):

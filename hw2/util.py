@@ -1,4 +1,5 @@
 import sys
+import inspect
 
 class Counter(dict):
     """

@@ -12,8 +12,14 @@ def buildSourceModel(vocabulary, suffixes):
     fsa.setInitialState('start')
     fsa.setFinalState('end')
     
-    ### TODO: YOUR CODE HERE
-    util.raiseNotDefined()
+    #Take every vocabulary entry
+    for w in vocabulary:
+        #Take every suffix in suffixes
+        for s in suffixes:
+            #Add edges for each word and each word plus the suffix
+            fsa.addEdgeSequence('start', 'end', w)
+            fsa.addEdgeSequence('start', 'end', w+s)
+    #util.raiseNotDefined()
 
     return fsa
 
@@ -54,11 +60,31 @@ def buildChannelModel():
             continue
         fst.addEdge('rule2c', 'rule2d', c, c)     # keep anything except e or i
     fst.addEdge('rule2d', 'rule2d', '.', '.')     # keep the rest
-    fst.addEdge('rule2d', 'end' , None, None)   # we're done
+    fst.addEdge('rule2d', 'end' , None, None)     # we're done
 
     # implementation of rule 3
-    ### TODO: YOUR CODE HERE
-    util.raiseNotDefined()
+    #Academic honesty note - Alan Mishler, Ryan Corbett and I compared
+    #our codes in this file
+    fst.addEdge('start' , 'rule3' , None, None)   # epsilon transition
+    fst.addEdge('rule3' , 'rule3' , '.',  '.')    # accept any characters and copy them
+    fst.addEdge('rule3' , 'rule3b', 'a',  'a')    # copy an a ...
+    fst.addEdge('rule3' , 'rule3b', 'e',  'e')    # or copy an e ...
+    fst.addEdge('rule3' , 'rule3b', 'i',  'i')    # or copy an i ...
+    fst.addEdge('rule3' , 'rule3b', 'o',  'o')    # or copy an o ...
+    fst.addEdge('rule3' , 'rule3b', 'u',  'u')    # or copy an u ...
+    fst.addEdge('rule3b', 'rule3c', 'c',  'c')    # and then copy a c ...
+    fst.addEdge('rule3c', 'rule3d', '+',  None)   # and then remove the +
+    for i in range(ord('a'), ord('z')):
+        c = chr(i)
+        if c == 'e' or c == 'i':
+            fst.addEdge('rule3d', 'rule3e', None, 'k') # if you find an e or i in the suffix, insert a k
+            fst.addEdge('rule3e', 'rule3f', c, c) # don't forget to put back in the character you looked at
+        else:
+            fst.addEdge('rule3d', 'rule3e', None,  None)    # otherwise keep going as normal
+            fst.addEdge('rule3e', 'rule3f', c, c) # add back in your c
+    fst.addEdge('rule3f', 'rule3g', '.',  '.')    # and then copy the suffix
+    fst.addEdge('rule3g', 'end' , None, None)     # completion!
+    #util.raiseNotDefined()
 
     return fst
 
